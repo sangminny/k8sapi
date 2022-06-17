@@ -1,32 +1,41 @@
 def version
-pipeline{
-    agent{
-        label any
-    }
+pipeline {
+    agent any
 
+    // triggers {
+    //     pollSCM('*/3 * * * *')
+    // }
     parameters {
         string(name: 'projectName', defaultValue: 'k8sapi')
-    }
+    }  
 
-    stages{
-        stage("Clone Git"){
-            steps{
-                echo "========Clone Source from Github========"
+    stages {
+        // 레포지토리를 다운로드 받음
+        stage('Repository Prepare') {
+            agent any
+            steps {
+                echo 'Clonning Repository'
                 checkout scm
             }
-            post{
-                success{
-                    echo "========Clonning successfully========"
+
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    echo 'Successfully Cloned Repository'
                 }
-                failure{
-                    echo "========Clonning failed========"
+                always {
+                    echo "i tried..."
+                }
+                cleanup {
+                    echo "after all other post condition"
                 }
             }
         }
 
-        stage("Get Build Version"){
-            steps{
-                echo "========Get Build Version========"
+        stage('Build version') {
+            agent any
+            steps {
                 script {
                     // echo "** version init : ${params.version} **"
                     version = sh( returnStdout: true, script: "cat build.gradle | grep -o 'version = [^,]*'" ).trim()
@@ -38,18 +47,12 @@ pipeline{
                     echo "** version load : ${version} **"
                 }
             }
-            post{
-                success{
-                    echo "========Clonning successfully========"
-                }
-                failure{
-                    echo "========Clonning failed========"
-                }
-            }
         }
-        stage("Build"){
-            steps{
-                echo "========Build========"
+        
+        stage('Bulid gradle') {
+            agent any
+            steps {
+                echo 'Build Backend'
                 dir ('./'){
                     sh """
                     echo final version: ${version}
@@ -59,19 +62,23 @@ pipeline{
                     """
                 }
             }
-            post{
-                success{
-                    echo "========Build successfully========"
+
+            post {
+                success {
+                    echo 'Successfully Image Build'
                 }
-                failure{
-                    echo "========Build failed========"
+
+                failure {
+                  error 'This pipeline stops here...'
                 }
             }
         }
 
-        stage("Deploy"){
-            steps{
-                echo "========Build docker image and push to dockerRegistry========"
+        stage('docker Image build & push') {
+            agent any
+            steps {
+                echo 'build & registry push'
+                
                 script {
                     docker.withRegistry("https://healthcare.kr.ncr.ntruss.com", 'dockerRegistry') {
                         def customImage = docker.build("healthcare.kr.ncr.ntruss.com/${params.projectName}:${version}")
@@ -79,23 +86,8 @@ pipeline{
                     }
                 }
             }
-            post{
-                success{
-                    echo "========Deploy successfully========"
-                }
-                failure{
-                    echo "========Deploy failed========"
-                }
-            }
-        }
-    }
-
-    post{
-        success{
-            echo "========pipeline executed successfully ========"
-        }
-        failure{
-            echo "========pipeline execution failed========"
+            
+            
         }
     }
 }
