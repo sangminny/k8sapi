@@ -14,4 +14,5 @@ ENV ACTIVE_PROFILE dev
 EXPOSE 8080/tcp
 
 # ENTRYPOINT ["java", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar", "/k8sapi.jar"]
+RUN pwd
 CMD ["java", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar", "k8sapi.jar"]
