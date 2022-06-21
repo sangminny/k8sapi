@@ -11,7 +11,7 @@ pipeline {
 
     stages {
         // 레포지토리를 다운로드 받음
-        stage('Repository Prepare') {
+        stage('Clone Github') {
             agent any
             steps {
                 echo 'Clonning Repository'
@@ -22,7 +22,7 @@ pipeline {
                 // If Maven was able to run the tests, even if some of the test
                 // failed, record the test results and archive the jar file.
                 success {
-                    echo 'Successfully Cloned Repository'
+                    echo '======== Successfully Cloned Repository ========'
                 }
                 always {
                     echo "i tried..."
@@ -33,39 +33,54 @@ pipeline {
             }
         }
 
-        stage('Build version') {
-            agent any
-            steps {
-                script {
-                    // echo "** version init : ${params.version} **"
-                    version = sh( returnStdout: true, script: "cat build.gradle | grep -o 'version = [^,]*'" ).trim()
-                    echo "** version temp : ${version} **"
+        // stage('Build version') {
+        //     agent any
+        //     steps {
+        //         script {
+        //             // echo "** version init : ${params.version} **"
+        //             version = sh( returnStdout: true, script: "cat build.gradle | grep -o 'version = [^,]*'" ).trim()
+        //             echo "** version temp : ${version} **"
                     
-                    version = version.split(/=/)[1]
-                    version = version.replaceAll("'","").trim()
-                    // params.put("version", tempSplit)
-                    echo "** version load : ${version} **"
-                }
-            }
-        }
+        //             version = version.split(/=/)[1]
+        //             version = version.replaceAll("'","").trim()
+        //             // params.put("version", tempSplit)
+        //             echo "** version load : ${version} **"
+        //         }
+        //     }
+        // }
         
-        stage('Bulid gradle') {
+        stage('Bulid') {
             agent any
             steps {
-                echo 'Build Backend'
-                dir ('./'){
-                    sh """
-                    echo final version: ${version}
-                    chmod +x gradlew
-                    ./gradlew clean build
-                    ls -al ./build
-                    """
+                step {
+                    script {
+                        // echo "** version init : ${params.version} **"
+                        version = sh( returnStdout: true, script: "cat build.gradle | grep -o 'version = [^,]*'" ).trim()
+                        echo "** version temp : ${version} **"
+                        
+                        version = version.split(/=/)[1]
+                        version = version.replaceAll("'","").trim()
+                        // params.put("version", tempSplit)
+                        echo "======== version load : ${version} ========"
+                    }
                 }
+                step {
+                    echo 'Build Backend'
+                    dir ('./'){
+                        sh """
+                        echo final version: ${version}
+                        chmod +x gradlew
+                        ./gradlew clean build
+                        ls -al ./build
+                        """
+                    }
+                }
+
             }
 
             post {
                 success {
-                    echo 'Successfully Image Build'
+                    echo '======== Successfully Build ========'
                 }
 
                 failure {
@@ -74,10 +89,10 @@ pipeline {
             }
         }
 
-        stage('docker Image build & push') {
+        stage('Push') {
             agent any
             steps {
-                echo 'build & registry push'
+                echo '======== build & registry push ========'
                 
                 // // * To NDS NCP Image Repository
                 // script {
