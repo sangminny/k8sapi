@@ -7,7 +7,7 @@ pipeline {
     // }
     parameters {
         string(name: 'projectName', defaultValue: 'k8sapi')
-    }  
+    }
 
     stages {
         // 레포지토리를 다운로드 받음
@@ -40,7 +40,7 @@ pipeline {
                     // echo "** version init : ${params.version} **"
                     version = sh( returnStdout: true, script: "cat build.gradle | grep -o 'version = [^,]*'" ).trim()
                     echo "** version temp : ${version} **"
-                    
+
                     version = version.split(/=/)[1]
                     version = version.replaceAll("'","").trim()
                     // params.put("version", tempSplit)
@@ -48,7 +48,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Bulid') {
             agent any
             steps {
@@ -62,7 +62,7 @@ pipeline {
                         """
                     }
                 }
-            
+
 
             post {
                 success {
@@ -79,24 +79,24 @@ pipeline {
             agent any
             steps {
                 echo '======== build & registry push ========'
-                
-                // // * To NDS NCP Image Repository
-                // script {
-                //     docker.withRegistry("https://healthcare.kr.ncr.ntruss.com", 'dockerRegistry') {
-                //         def customImage = docker.build("healthcare.kr.ncr.ntruss.com/${params.projectName}:${version}")
-                //         customImage.push()
-                //         customImage.push("latest")
-                //     }
-                // }
-                
-                // * To Docker hub Repository - sangminny
+
+                // * To NDS NCP Image Repository
                 script {
-                    docker.withRegistry("https://registry.hub.docker.com", 'docker-hub-sangminny') {
-                        def customImage = docker.build("sangminny/${params.projectName}")
-                        customImage.push("${version}")
+                    docker.withRegistry("https://healthcare.kr.ncr.ntruss.com", 'dockerRegistry') {
+                        def customImage = docker.build("healthcare.kr.ncr.ntruss.com/${params.projectName}:${version}")
+                        customImage.push()
                         customImage.push("latest")
                     }
                 }
+
+                // * To Docker hub Repository - sangminny
+                // script {
+                //     docker.withRegistry("https://registry.hub.docker.com", 'docker-hub-sangminny') {
+                //         def customImage = docker.build("sangminny/${params.projectName}")
+                //         customImage.push("${version}")
+                //         customImage.push("latest")
+                //     }
+                // }
             }
          }
     }
