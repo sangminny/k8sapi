@@ -33,38 +33,25 @@ pipeline {
             }
         }
 
-        // stage('Build version') {
-        //     agent any
-        //     steps {
-        //         script {
-        //             // echo "** version init : ${params.version} **"
-        //             version = sh( returnStdout: true, script: "cat build.gradle | grep -o 'version = [^,]*'" ).trim()
-        //             echo "** version temp : ${version} **"
+        stage('Build version') {
+            agent any
+            steps {
+                script {
+                    // echo "** version init : ${params.version} **"
+                    version = sh( returnStdout: true, script: "cat build.gradle | grep -o 'version = [^,]*'" ).trim()
+                    echo "** version temp : ${version} **"
                     
-        //             version = version.split(/=/)[1]
-        //             version = version.replaceAll("'","").trim()
-        //             // params.put("version", tempSplit)
-        //             echo "** version load : ${version} **"
-        //         }
-        //     }
-        // }
+                    version = version.split(/=/)[1]
+                    version = version.replaceAll("'","").trim()
+                    // params.put("version", tempSplit)
+                    echo "** version load : ${version} **"
+                }
+            }
+        }
         
         stage('Bulid') {
             agent any
             steps {
-                step {
-                    script {
-                        // echo "** version init : ${params.version} **"
-                        version = sh( returnStdout: true, script: "cat build.gradle | grep -o 'version = [^,]*'" ).trim()
-                        echo "** version temp : ${version} **"
-                        
-                        version = version.split(/=/)[1]
-                        version = version.replaceAll("'","").trim()
-                        // params.put("version", tempSplit)
-                        echo "======== version load : ${version} ========"
-                    }
-                }
-                step {
                     echo 'Build Backend'
                     dir ('./'){
                         sh """
@@ -75,8 +62,7 @@ pipeline {
                         """
                     }
                 }
-
-            }
+            
 
             post {
                 success {
@@ -112,8 +98,6 @@ pipeline {
                     }
                 }
             }
-            
-            
-        }
+         }
     }
 }
