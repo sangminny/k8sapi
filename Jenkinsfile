@@ -79,21 +79,23 @@ pipeline {
             steps {
                 echo 'build & registry push'
                 
-                // * To NDS NCP Image Repository
-                script {
-                    docker.withRegistry("https://healthcare.kr.ncr.ntruss.com", 'dockerRegistry') {
-                        def customImage = docker.build("healthcare.kr.ncr.ntruss.com/${params.projectName}:${version}")
-                        customImage.push()
-                    }
-                }
-                
-                // * To Docker hub Repository - sangminny
+                // // * To NDS NCP Image Repository
                 // script {
                 //     docker.withRegistry("https://healthcare.kr.ncr.ntruss.com", 'dockerRegistry') {
                 //         def customImage = docker.build("healthcare.kr.ncr.ntruss.com/${params.projectName}:${version}")
                 //         customImage.push()
+                //         customImage.push("latest")
                 //     }
                 // }
+                
+                // * To Docker hub Repository - sangminny
+                script {
+                    docker.withRegistry("https://registry.hub.docker.com", 'docker-hub-sangminny') {
+                        def customImage = docker.build("sangminny/${params.projectName}")
+                        customImage.push("${version}")
+                        customImage.push("latest")
+                    }
+                }
             }
             
             
