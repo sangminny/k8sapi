@@ -21,7 +21,7 @@ COPY build/libs/*.jar /usr/src/nds/k8sapi.jar
 WORKDIR /usr/src/nds
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
-RUN chmod 777 /usr/src/nds/k8sapi-0.0.1-SNAPSHOT.jar
+RUN chmod 777 /usr/src/nds/k8sapi.jar
 
 EXPOSE 8080
-CMD ["java","-Duser.timezone=Asia/Seoul","-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar" ,"k8sapi-0.0.1-SNAPSHOT.jar"]
+CMD ["java","-Duser.timezone=Asia/Seoul","-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar" ,"k8sapi.jar"]
