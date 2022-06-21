@@ -14,7 +14,7 @@ pipeline {
         stage('Clone Github') {
             agent any
             steps {
-                echo 'Clonning Repository'
+                echo '======== Clonning Repository ========'
                 checkout scm
             }
 
@@ -22,7 +22,7 @@ pipeline {
                 // If Maven was able to run the tests, even if some of the test
                 // failed, record the test results and archive the jar file.
                 success {
-                    echo '======== Successfully Cloned Repository ========'
+                    echo 'Successfully Cloned Repository'
                 }
                 always {
                     echo "i tried..."
@@ -81,20 +81,20 @@ pipeline {
                 echo '======== build & registry push ========'
 
                 // * To NDS NCP Image Repository
-                script {
-                    docker.withRegistry("https://healthcare.kr.ncr.ntruss.com", 'dockerRegistry') {
-                        def customImage = docker.build("healthcare.kr.ncr.ntruss.com/${params.projectName}:${version}")
-                        customImage.push()
-                        //customImage.push("latest")
-                    }
-                }
+                // script {
+                //     docker.withRegistry("https://healthcare.kr.ncr.ntruss.com", 'dockerRegistry') {
+                //         def customImage = docker.build("healthcare.kr.ncr.ntruss.com/${params.projectName}:${version}")
+                //         customImage.push()
+                //         //customImage.push("latest")
+                //     }
+                // }
 
                 // * To Docker hub Repository - sangminny
                 script {
                     docker.withRegistry("https://registry.hub.docker.com", 'docker-hub-sangminny') {
                         def customImage = docker.build("sangminny/${params.projectName}")
                         customImage.push("${version}")
-                        //customImage.push("latest")
+                        customImage.push("latest")
                     }
                 }
             }

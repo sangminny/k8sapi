@@ -1,4 +1,5 @@
 FROM openjdk:8-jre-slim
+
 # make nds directory
 RUN mkdir -p /usr/src/nds
 
