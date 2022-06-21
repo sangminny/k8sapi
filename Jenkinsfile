@@ -90,13 +90,13 @@ pipeline {
                 }
 
                 // * To Docker hub Repository - sangminny
-                // script {
-                //     docker.withRegistry("https://registry.hub.docker.com", 'docker-hub-sangminny') {
-                //         def customImage = docker.build("sangminny/${params.projectName}")
-                //         customImage.push("${version}")
-                //         customImage.push("latest")
-                //     }
-                // }
+                script {
+                    docker.withRegistry("https://registry.hub.docker.com", 'docker-hub-sangminny') {
+                        def customImage = docker.build("sangminny/${params.projectName}")
+                        customImage.push("${version}")
+                        customImage.push("latest")
+                    }
+                }
             }
          }
     }
