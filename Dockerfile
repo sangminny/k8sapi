@@ -1,4 +1,7 @@
 FROM openjdk:8-jre-slim
+# make nds directory
+RUN mkdir -p /usr/src/nds
+
 WORKDIR /usr/src/nds
 COPY build/libs/*.jar ./k8sapi.jar
 
