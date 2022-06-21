@@ -17,7 +17,7 @@ FROM openjdk:8-jre-slim
 # RUN pwd
 # CMD ["java", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar", "k8sapi.jar"]
 
-ADD target/k8sapi-0.0.1-SNAPSHOT.jar /usr/src/hola/
+ADD build/libs/k8sapi-0.0.1-SNAPSHOT.jar /usr/src/hola/
 WORKDIR /usr/src/hola
 RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
