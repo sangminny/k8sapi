@@ -6,7 +6,7 @@ pipeline {
     //     pollSCM('*/3 * * * *')
     // }
     parameters {
-        string(name: 'projectName', defaultValue: 'k8sapi')
+        string(name: 'projectName', defaultValue: 'k8sapi-smlee')
     }
 
     stages {

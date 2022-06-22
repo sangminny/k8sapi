@@ -1,7 +1,7 @@
 FROM openjdk:8-jre-slim
 
 # make nds directory
-RUN mkdir -p /usr/src/nds
+#RUN mkdir -p /usr/src/nds
 
 WORKDIR /usr/src/nds
 
@@ -15,5 +15,5 @@ ENV ACTIVE_PROFILE dev
 # EXPOSE 80/tcp
 EXPOSE 8080/tcp
 
-# ENTRYPOINT ["java", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar", "/k8sapi.jar"]
-CMD ["java", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar", "k8sapi.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar", "k8sapi.jar"]
+# CMD ["java", "-Dspring.profiles.active=${ACTIVE_PROFILE}", "-jar", "k8sapi.jar"]
