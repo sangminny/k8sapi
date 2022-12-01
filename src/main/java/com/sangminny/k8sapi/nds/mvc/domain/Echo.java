@@ -6,4 +6,5 @@ import lombok.Data;
 public class Echo {
     private String profile;
     private String ip;
+    private String hostName;
 }

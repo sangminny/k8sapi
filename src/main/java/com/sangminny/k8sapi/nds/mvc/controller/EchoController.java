@@ -1,5 +1,6 @@
 package com.sangminny.k8sapi.nds.mvc.controller;
 
+import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
+
+
 
 import com.sangminny.k8sapi.nds.mvc.domain.Echo;
 
@@ -29,15 +32,26 @@ public class EchoController {
     @GetMapping("")
     public Echo getEcho() {
 
-        String ip = "Unknown";
+        Echo echo = new Echo();
+        echo.setIp("Unknown");
         try {
-            ip = InetAddress.getLocalHost().getHostAddress();
+            InetAddress host = InetAddress.getLocalHost();
+            echo.setIp(host.getHostAddress());
+            echo.setHostName(host.getHostName());
+
+            // final DatagramSocket socket = new DatagramSocket();
+            // socket.connect(InetAddress.getByName("192.168.219.1"), 10002);
+            // ip = socket.getLocalAddress().getHostAddress();
+
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+
         }
 
-        Echo echo = new Echo();
-        echo.setIp(ip);
+        
+
+        // echo.setIp(ip);
         echo.setProfile(activeProfile);
         return echo;
     }
